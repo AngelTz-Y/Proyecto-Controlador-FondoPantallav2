@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -31,6 +31,27 @@
             setTimeout(function() {
                 window.close();
             }, 2000);  // Espera 2 segundos antes de cerrar
+
+
+
+            window.onload = function() {
+                // Función que activa el modo pantalla completa
+                function openFullscreen() {
+                    if (document.documentElement.requestFullscreen) {
+                        document.documentElement.requestFullscreen();
+                    } else if (document.documentElement.mozRequestFullScreen) { // Firefox
+                        document.documentElement.mozRequestFullScreen();
+                    } else if (document.documentElement.webkitRequestFullscreen) { // Chrome, Safari y Opera
+                        document.documentElement.webkitRequestFullscreen();
+                    } else if (document.documentElement.msRequestFullscreen) { // IE/Edge
+                        document.documentElement.msRequestFullscreen();
+                    }
+                }
+                // Llamar a la función para activar pantalla completa
+                openFullscreen();
+            }
+
+
         }
     </script>
 </body>
