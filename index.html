@@ -3,95 +3,290 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Auto Cierre con Carrusel</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Carrusel 3D Mejorado</title>
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+
     <style>
-        .fade {
-            animation: fadeEffect 1s ease-in-out;
+        /* Ajuste de imágenes */
+
+        .carousel-nav {
+            position: absolute;
+            width: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 10;
         }
-        @keyframes fadeEffect {
-            from { opacity: 0.5; }
-            to { opacity: 1; }
+        
+        .carousel-control-prev,
+        .carousel-control-next {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
         }
-        .carousel-img {
+        
+        .carousel-control-prev i,
+        .carousel-control-next i {
+            transition: transform 0.2s ease-in-out;
+        }
+        
+        .carousel-control-prev:hover i,
+        .carousel-control-next:hover i {
+            transform: scale(1.2);}
+
+        .carousel-item img {
             width: 100vw;
             height: 100vh;
-            object-fit: cover; /* Ajuste predeterminado */
-            object-position: center;
+            object-fit: cover;
+            transition: transform 1s ease-in-out, opacity 1s ease-in-out;
+            transform: perspective(1200px) rotateY(10deg) scale(1);
         }
+
+        /* Efecto de profundidad en las imágenes */
+        .carousel-item.active img {
+            transform: perspective(1200px) rotateY(0deg) scale(1.1);
+            opacity: 1;
+        }
+
+        .carousel-item-next img,
+        .carousel-item-prev img {
+            transform: perspective(1200px) rotateY(-10deg) scale(0.9);
+            opacity: 0.8;
+        }
+
+        /* Ajuste especial para imagen 2 */
         .contain-img {
-            object-fit: contain !important; /* Para imágenes grandes */
-            background-color: black; /* Fondo negro si hay bordes */
+            object-fit: contain !important;
+            background-color: black;
         }
+
+        /* Flechas de navegación con animación 3D */
+        .carousel-control-prev, .carousel-control-next {
+            width: 10%;
+            z-index: 10;
+        }
+
+        .carousel-control-prev-icon, .carousel-control-next-icon {
+            background-color: rgba(0, 0, 0, 0.6);
+            padding: 20px;
+            border-radius: 50%;
+            transition: transform 0.3s ease-in-out, background-color 0.3s, box-shadow 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Efecto de rebote y glow */
+        .carousel-control-prev:hover .carousel-control-prev-icon,
+        .carousel-control-next:hover .carousel-control-next-icon {
+            background-color: rgba(255, 255, 255, 0.8);
+            transform: scale(1.2);
+            box-shadow: 0px 0px 20px rgba(255, 255, 255, 0.5);
+        }
+
+        /* Íconos dentro de las flechas */
+        .carousel-control-prev-icon::after,
+        .carousel-control-next-icon::after {
+            font-family: "Bootstrap-icons";
+            font-size: 32px;
+            color: white;
+        }
+
+        .carousel-control-prev-icon::after {
+            content: "\f104"; /* Icono de flecha izquierda */
+        }
+
+        .carousel-control-next-icon::after {
+            content: "\f105"; /* Icono de flecha derecha */
+        }
+
+        /* Barra de navegación centrada */
+        .carousel-indicators {
+            position: absolute;
+            bottom: 20px;
+            left: 36%;
+            transform: translateX(-50%);
+            display: flex;
+            justify-content: center;
+        }
+
+        .carousel-indicators button {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.5);
+            border: none;
+            margin: 0 5px;
+            transition: background-color 0.3s ease-in-out, transform 0.3s;
+        }
+
+        .carousel-indicators .active {
+            background-color: white;
+            transform: scale(1.3);
+        }
+
+        /* Botón de cierre */
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            border: none;
+            padding: 18px;
+            border-radius: 50%;
+            font-size: 26px;
+            transition: all 0.3s ease-in-out;
+            z-index: 20;
+        }
+
+        .close-btn:hover {
+            background-color: red;
+            animation: shake 0.3s ease-in-out;
+            box-shadow: 0px 0px 20px rgba(255, 0, 0, 0.7);
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25%, 75% { transform: translateX(-3px); }
+            50% { transform: translateX(3px); }
+        }
+
+
+        .carousel-nav button {
+            transition: filter 0.3s ease-in-out;
+        }
+        
+        .carousel-nav button:hover {
+            filter: drop-shadow(0 0 10px white);
+        }
+        
+
+        
+
+        .close-btn i {
+            font-size: 30px;
+        }
+        
     </style>
 </head>
-<body class="relative bg-black h-screen w-screen overflow-hidden flex justify-center items-center">
+<body class="bg-dark d-flex justify-content-center align-items-center vh-100">
 
-    <!-- Carrusel en pantalla completa -->
-    <div class="absolute top-0 left-0 w-full h-full">
-        <img id="carousel-img" src="img/fondo-cesfam-saludpaillaco.jpg" alt="Imagen de fondo" class="carousel-img fade">
-        
-        <!-- Flechas de navegación -->
-        <button id="prev-btn" class="absolute top-1/2 left-4 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-4 rounded-full hover:bg-opacity-80">◄</button>
-        <button id="next-btn" class="absolute top-1/2 right-4 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-4 rounded-full hover:bg-opacity-80">►</button>
+    <!-- Carrusel Bootstrap -->
+    <div id="carouselExample" class="carousel slide w-100 h-100" data-bs-wrap="true">
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#carouselExample" data-bs-slide-to="0" class="active"></button>
+            <button type="button" data-bs-target="#carouselExample" data-bs-slide-to="1"></button>
+            <button type="button" data-bs-target="#carouselExample" data-bs-slide-to="2"></button>
+        </div>
+
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <img src="img/fondo-cesfam-saludpaillaco.jpg" class="d-block w-100" alt="Imagen 1">
+            </div>
+            <div class="carousel-item">
+                <img src="img/imagen2.jpg" class="d-block w-100 contain-img" alt="Imagen 2">
+            </div>
+            <div class="carousel-item">
+                <img src="img/imagen3.png" class="d-block w-100 contain-img" alt="Imagen 3">
+            </div>
+        </div>
+
+        <!-- Controles de navegación -->
+        <!-- Botón "Atrás" con icono y texto -->
+    <div class="carousel-nav">
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+            <span class="d-block text-white mb-1">Atrás</span>
+            <i class="bi bi-arrow-left-circle-fill fs-2"></i>
+        </button>
+
+        <!-- Botón "Siguiente" con icono y texto -->
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+            <span class="d-block text-white mb-1">Siguiente</span>
+            <i class="bi bi-arrow-right-circle-fill fs-2"></i>
+        </button>
     </div>
-    
-    <!-- Botón de cerrar "X" -->
-    <button class="absolute top-5 right-5 text-white bg-black bg-opacity-70 hover:bg-red-600 p-4 rounded-full text-3xl transition-transform transform hover:rotate-180 focus:outline-none z-10" onclick="closeWindow();">X</button>
+
+    </div>
+
+    <!-- Botón de cierre -->
+    <button class="close-btn" onclick="closeWindow();">
+        <i class="bi bi-x-lg"></i>
+    </button>
 
     <!-- Sonido de cierre -->
     <audio id="close-sound" src="sounds/success_bell-6776.mp3" preload="auto"></audio>
 
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
     <script>
-        const images = [
-            "img/fondo-cesfam-saludpaillaco.jpg",
-            "img/imagen2.jpg",
-            "img/imagen3.jpg"
-        ];
-        let index = 0;
-        const imgElement = document.getElementById("carousel-img");
+        let myCarousel;
+let autoSlideInterval;
+let userInteracted = false;
+let restartAutoSlideTimeout;
 
-        function showImage(i) {
-            index = (i + images.length) % images.length;
-            imgElement.classList.remove("fade");
-            void imgElement.offsetWidth;
-            imgElement.classList.add("fade");
-            imgElement.src = images[index];
+function closeWindow() {
+    var sound = document.getElementById("close-sound");
+    sound.play();
+    setTimeout(() => {
+        window.close();
+    }, 1000);
+}
 
-            // Si la imagen es la 2, usa 'contain' para ajustarla mejor
-            if (images[index] === "img/imagen2.jpg") {
-                imgElement.classList.add("contain-img");
-            } else {
-                imgElement.classList.remove("contain-img");
-            }
-        }
+function startAutoSlide() {
+    stopAutoSlide();
+    autoSlideInterval = setInterval(() => {
+        myCarousel.next();
+    }, 5000);
+}
 
-        document.getElementById("prev-btn").addEventListener("click", () => showImage(index - 1));
-        document.getElementById("next-btn").addEventListener("click", () => showImage(index + 1));
-        setInterval(() => showImage(index + 1), 5000);
+function stopAutoSlide() {
+    clearInterval(autoSlideInterval);
+}
 
-        function closeWindow() {
-            var sound = document.getElementById("close-sound");
-            sound.play();
-            setTimeout(() => window.close(), 2000);
-        }
+function restartAutoSlideAfterDelay() {
+    clearTimeout(restartAutoSlideTimeout);
+    restartAutoSlideTimeout = setTimeout(() => {
+        userInteracted = false;
+        startAutoSlide();
+    }, 5000); // Reinicia el carrusel después de 5 segundos de inactividad
+}
 
-        function openFullscreen() {
-            if (document.documentElement.requestFullscreen) {
-                document.documentElement.requestFullscreen();
-            } else if (document.documentElement.mozRequestFullScreen) {
-                document.documentElement.mozRequestFullScreen();
-            } else if (document.documentElement.webkitRequestFullscreen) {
-                document.documentElement.webkitRequestFullscreen();
-            } else if (document.documentElement.msRequestFullscreen) {
-                document.documentElement.msRequestFullscreen();
-            }
-        }
+window.onload = function() {
+    myCarousel = new bootstrap.Carousel(document.getElementById("carouselExample"), {
+        interval: false,
+        wrap: true
+    });
 
-        window.onload = function() {
-            openFullscreen();
-            setTimeout(closeWindow, 5000);
-        }
+    startAutoSlide();
+    setTimeout(closeWindow, 60000);
+};
+
+// Eventos para detener el auto-slide cuando el usuario interactúa
+document.querySelector(".carousel-control-prev").addEventListener("click", () => {
+    stopAutoSlide();
+    userInteracted = true;
+    restartAutoSlideAfterDelay();
+});
+
+document.querySelector(".carousel-control-next").addEventListener("click", () => {
+    stopAutoSlide();
+    userInteracted = true;
+    restartAutoSlideAfterDelay();
+});
+
     </script>
 </body>
 </html>
