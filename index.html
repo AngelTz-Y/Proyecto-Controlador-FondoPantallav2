@@ -3,55 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <!-- Enlace a Tailwind CSS -->
+    <title>Auto Cierre con Carrusel</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .fade {
+            animation: fadeEffect 1s ease-in-out;
+        }
+        @keyframes fadeEffect {
+            from { opacity: 0.5; }
+            to { opacity: 1; }
+        }
+        .carousel-img {
+            width: 100vw;
+            height: 100vh;
+            object-fit: cover; /* Ajuste predeterminado */
+            object-position: center;
+        }
+        .contain-img {
+            object-fit: contain !important; /* Para imágenes grandes */
+            background-color: black; /* Fondo negro si hay bordes */
+        }
+    </style>
 </head>
-<body class="relative bg-gray-100 h-screen overflow-hidden flex justify-center items-center">
+<body class="relative bg-black h-screen w-screen overflow-hidden flex justify-center items-center">
 
-    <!-- Imagen centrada con Tailwind -->
-    <img src="img/fondo-cesfam-saludpaillaco.jpg" alt="Imagen de fondo" class="object-cover w-full h-full absolute top-0 left-0 z-0">
-
+    <!-- Carrusel en pantalla completa -->
+    <div class="absolute top-0 left-0 w-full h-full">
+        <img id="carousel-img" src="img/fondo-cesfam-saludpaillaco.jpg" alt="Imagen de fondo" class="carousel-img fade">
+        
+        <!-- Flechas de navegación -->
+        <button id="prev-btn" class="absolute top-1/2 left-4 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-4 rounded-full hover:bg-opacity-80">◄</button>
+        <button id="next-btn" class="absolute top-1/2 right-4 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-4 rounded-full hover:bg-opacity-80">►</button>
+    </div>
+    
     <!-- Botón de cerrar "X" -->
-    <button class="close-btn absolute top-5 right-5 text-white bg-black bg-opacity-70 hover:bg-red-600 p-4 rounded-full text-3xl transition-transform transform hover:rotate-180 focus:outline-none z-10" onclick="closeWindow();">
-        X
-    </button>
+    <button class="absolute top-5 right-5 text-white bg-black bg-opacity-70 hover:bg-red-600 p-4 rounded-full text-3xl transition-transform transform hover:rotate-180 focus:outline-none z-10" onclick="closeWindow();">X</button>
 
     <!-- Sonido de cierre -->
     <audio id="close-sound" src="sounds/success_bell-6776.mp3" preload="auto"></audio>
 
     <script>
-        // Función para cerrar la ventana con sonido
-        function closeWindow() {
-            // Reproducir el sonido de cierre
-            var sound = document.getElementById("close-sound");
-            sound.play();  // Reproduce el sonido cuando se hace clic en el botón
-            
-            // Intentar cerrar la ventana con un pequeño retraso para que el sonido se escuche
-            setTimeout(function() {
-                window.close();
-            }, 2000);  // Espera 2 segundos antes de cerrar
+        const images = [
+            "img/fondo-cesfam-saludpaillaco.jpg",
+            "img/imagen2.jpg",
+            "img/imagen3.jpg"
+        ];
+        let index = 0;
+        const imgElement = document.getElementById("carousel-img");
 
+        function showImage(i) {
+            index = (i + images.length) % images.length;
+            imgElement.classList.remove("fade");
+            void imgElement.offsetWidth;
+            imgElement.classList.add("fade");
+            imgElement.src = images[index];
 
-
-            window.onload = function() {
-                // Función que activa el modo pantalla completa
-                function openFullscreen() {
-                    if (document.documentElement.requestFullscreen) {
-                        document.documentElement.requestFullscreen();
-                    } else if (document.documentElement.mozRequestFullScreen) { // Firefox
-                        document.documentElement.mozRequestFullScreen();
-                    } else if (document.documentElement.webkitRequestFullscreen) { // Chrome, Safari y Opera
-                        document.documentElement.webkitRequestFullscreen();
-                    } else if (document.documentElement.msRequestFullscreen) { // IE/Edge
-                        document.documentElement.msRequestFullscreen();
-                    }
-                }
-                // Llamar a la función para activar pantalla completa
-                openFullscreen();
+            // Si la imagen es la 2, usa 'contain' para ajustarla mejor
+            if (images[index] === "img/imagen2.jpg") {
+                imgElement.classList.add("contain-img");
+            } else {
+                imgElement.classList.remove("contain-img");
             }
+        }
 
+        document.getElementById("prev-btn").addEventListener("click", () => showImage(index - 1));
+        document.getElementById("next-btn").addEventListener("click", () => showImage(index + 1));
+        setInterval(() => showImage(index + 1), 5000);
 
+        function closeWindow() {
+            var sound = document.getElementById("close-sound");
+            sound.play();
+            setTimeout(() => window.close(), 2000);
+        }
+
+        function openFullscreen() {
+            if (document.documentElement.requestFullscreen) {
+                document.documentElement.requestFullscreen();
+            } else if (document.documentElement.mozRequestFullScreen) {
+                document.documentElement.mozRequestFullScreen();
+            } else if (document.documentElement.webkitRequestFullscreen) {
+                document.documentElement.webkitRequestFullscreen();
+            } else if (document.documentElement.msRequestFullscreen) {
+                document.documentElement.msRequestFullscreen();
+            }
+        }
+
+        window.onload = function() {
+            openFullscreen();
+            setTimeout(closeWindow, 5000);
         }
     </script>
 </body>
