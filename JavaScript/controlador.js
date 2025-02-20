@@ -14,8 +14,10 @@ function closeWindow() {
 function startAutoSlide() {
     stopAutoSlide();
     autoSlideInterval = setInterval(() => {
-        myCarousel.next();
-    }, 5000);
+        if (!userInteracted) {
+            myCarousel.next();
+        }
+    }, 5000); // Cambia de imagen cada 5 segundos
 }
 
 function stopAutoSlide() {
@@ -25,9 +27,9 @@ function stopAutoSlide() {
 function restartAutoSlideAfterDelay() {
     clearTimeout(restartAutoSlideTimeout);
     restartAutoSlideTimeout = setTimeout(() => {
-        userInteracted = false;
+        userInteracted = false; // Restablece el auto-slide
         startAutoSlide();
-    }, 5000); // Reinicia el carrusel después de 5 segundos de inactividad
+    }, 5000); // Espera 5 segundos antes de reanudar el auto-slide
 }
 
 window.onload = function() {
@@ -38,17 +40,21 @@ window.onload = function() {
 
     startAutoSlide();
     setTimeout(closeWindow, 60000);
+
+    let prevButton = document.querySelector(".carousel-nav .carousel-control-prev");
+    let nextButton = document.querySelector(".carousel-nav .carousel-control-next");
+
+    if (prevButton && nextButton) {
+        prevButton.addEventListener("click", () => {
+            stopAutoSlide();
+            userInteracted = true;
+            restartAutoSlideAfterDelay();
+        });
+
+        nextButton.addEventListener("click", () => {
+            stopAutoSlide();
+            userInteracted = true;
+            restartAutoSlideAfterDelay();
+        });
+    }
 };
-
-// Eventos para detener el auto-slide cuando el usuario interactúa
-document.querySelector(".carousel-control-prev").addEventListener("click", () => {
-    stopAutoSlide();
-    userInteracted = true;
-    restartAutoSlideAfterDelay();
-});
-
-document.querySelector(".carousel-control-next").addEventListener("click", () => {
-    stopAutoSlide();
-    userInteracted = true;
-    restartAutoSlideAfterDelay();
-});
